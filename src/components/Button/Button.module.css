@@ -1,0 +1,20 @@
+.btn {
+    display: block;
+    padding: 10px;
+    border-radius: 10px;
+    margin: 20px auto;
+    width: 610px;
+    background-color: #1F305E;
+    color: white;
+    outline: none;
+    border: 1px solid transparent;
+    transition-duration: 300ms;
+}
+.btn:hover {
+    border-radius: 0;
+    background-color: orangered;
+    scale: 1.01;
+    -webkit-box-shadow: 10px 10px 5px 0px rgba(0,0,0,0.75);
+    -moz-box-shadow: 10px 10px 5px 0px rgba(0,0,0,0.75);
+    box-shadow: 10px 10px 5px 0px rgba(0,0,0,0.75);
+}
