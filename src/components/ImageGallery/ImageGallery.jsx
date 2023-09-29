@@ -6,7 +6,7 @@ export const ImageGallery = ({data}) => {
         <ul className={css.gallery}>
             {data.map(({id, webformatURL, largeImageURL, tags}) => {
                 return(
-                    <ImageGalleryItem id={id} image={webformatURL} fullImage={largeImageURL} alt={tags}/>
+                    <ImageGalleryItem key={id} image={webformatURL} fullImage={largeImageURL} alt={tags}/>
                 )
             })}
         </ul>

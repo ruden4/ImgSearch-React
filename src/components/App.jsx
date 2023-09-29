@@ -1,4 +1,4 @@
-import { Component } from "react";
+import { useState, useEffect } from "react";
 import { Searchbar } from "./Searchbar/Searchbar";
 import { ImageGallery } from "./ImageGallery/ImageGallery";
 import { Loader } from "./Loader/Loader";
@@ -9,64 +9,60 @@ import 'react-toastify/dist/ReactToastify.css';
 
 import { getRequestData } from "../API/API";
 
-export class App extends Component {
-  state = {
-    request: '',
-    page: 1,
-    imagesList: [],
-    total: 0,
-    isLoading: false,
-    error: ''
-  }
-  reset = () => {
-    this.setState({ page: 1, imagesList: [] });
+export function App() {
+  
+  const [request, setRequest] = useState('');
+  const [page, setPage] = useState(1);
+  const [imagesList, setImagesList] = useState([]);
+  const [total, setTotal] = useState(0);
+  const [isLoading, setIsLoading] = useState(false);
+  // eslint-disable-next-line no-unused-vars
+  const [error, setError] = useState('');
+
+  const reset = () => {
+    setPage(1);
+    setImagesList([]);
   };
 
-  handleMoreBtn = () => {
-    this.setState(prevState => ({
-      page: prevState.page + 1
-    }))
-  }
+  const handleMoreBtn = () => {
+    setPage(s => s + 1)
+  };
 
-  currentRequest = data => {
-    this.reset();
-    this.setState({request: data})
-  }
+  const currentRequest = data => {
+    reset();
+    setRequest(data)
+  };
 
-  async componentDidUpdate(_, prevState) {
-    const { request, page } = this.state;
-    if (page !== prevState.page || request !== prevState.request) {
-      this.setState({isLoading:true})
-      try {
-        const data = await getRequestData(request, page);
-        this.setState(prevState => ({
-          imagesList: [...prevState.imagesList, ...data.hits],
-          total: data.totalHits,
-        }));
-
-        !data.totalHits && toast.info(`Sorry, no results...`, {
+  useEffect(() => {
+    if (!request) return; 
+      setIsLoading(true)
+      const apidata = async () => {
+        try {
+          const {hits, totalHits} = await getRequestData(request, page);
+          setImagesList(s => [...s, ...hits]);
+          setTotal(totalHits);
+        !totalHits && toast.info(`Sorry, no results...`, {
           autoClose: 3000,
           hideProgressBar: true,
           theme: 'colored',
         });
 
       } catch (error) {
-        console.log(error)
+          setError(error);
       } finally {
-        this.setState({isLoading:false})
+        setIsLoading(false)
       }
-    }
-  }
+  } 
+    apidata()
+  }, [request, page])
 
-render() {
-  const { currentRequest, state } = this;
-  const { imagesList, isLoading, total, page} = state;
+
   return(
     <>
     <Searchbar onSubmit={currentRequest}/>
     {isLoading && <Loader/>}
     <ImageGallery data={imagesList}/>
-    {page < Math.ceil(total / 12 ) && <Button loadMore={this.handleMoreBtn}/>}
+    {page < Math.ceil(total / 12 ) && <Button loadMore={handleMoreBtn}/>}
     <ToastContainer
       position="top-right"
       autoClose={5000}
@@ -80,4 +76,5 @@ render() {
       theme="dark"
 />
     </>
-  )}};
+    )
+};

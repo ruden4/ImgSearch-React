@@ -1,31 +1,31 @@
-import { Component } from 'react';
+import { useEffect } from 'react';
 import css from './Modal.module.css';
 
-export class Modal extends Component {
-  componentDidMount() {
-    window.addEventListener('keydown', this.hendleKeyDown);
-  }
-  componentWillUnmount() {
-    window.removeEventListener('keydown', this.hendleKeyDown);
-  }
-  hendleKeyDown = e => {
-    if (e.code === 'Escape') {
-      this.props.toggleModal();
-    }
-  };
-  hendleOverlayClick = e => {
+export function Modal({ toggleModal, tags, largeImage }) {
+  
+ useEffect(() => {
+    const hendleKeyDown = e => {
+      if (e.code === 'Escape') {
+        toggleModal();
+      }
+    };
+   window.addEventListener('keydown', hendleKeyDown);
+   
+    return () => {
+      window.removeEventListener('keydown', hendleKeyDown);
+    };
+ }, [toggleModal]);
+  
+  const hendleOverlayClick = e => {
     if (e.currentTarget === e.target) {
-      this.props.toggleModal();
+      toggleModal();
     }
   };
-  render() {
-    const { largeImage, tags } = this.props;
     return (
-      <div className={css.overlay} onClick={this.hendleOverlayClick}>
+      <div className={css.overlay} onClick={hendleOverlayClick}>
         <div className={css.modal}>
           <img src={largeImage} alt={tags} />
         </div>
       </div>
     );
   }
-}
